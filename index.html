@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMT Training - Entrenamiento Cognitivo Motor</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Pantalla de Configuración -->
+    <div id="configScreen" class="screen active">
+        <div class="config-container">
+            <h1>🧠 CMT Training</h1>
+            <p class="subtitle">Entrenamiento Cognitivo Motor</p>
+            
+            <div class="config-section">
+                <h2>Configuración de Sesión</h2>
+                
+                <!-- Duración -->
+                <div class="config-group">
+                    <label for="duration">⏱️ Duración (segundos)</label>
+                    <div class="duration-options">
+                        <button class="duration-btn" data-value="30">30s</button>
+                        <button class="duration-btn" data-value="60">60s</button>
+                        <button class="duration-btn" data-value="120">120s</button>
+                        <button class="duration-btn" data-value="custom">Personalizado</button>
+                    </div>
+                    <input type="number" id="duration" min="10" max="600" value="60" class="hidden">
+                </div>
+
+                <!-- Nivel de Dificultad -->
+                <div class="config-group">
+                    <label>🎯 Nivel de Dificultad</label>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn" data-value="easy">Fácil (3s)</button>
+                        <button class="difficulty-btn" data-value="medium" data-selected="true">Medio (2s)</button>
+                        <button class="difficulty-btn" data-value="hard">Difícil (1s)</button>
+                        <button class="difficulty-btn" data-value="extreme">Extremo (0.5-1.5s)</button>
+                    </div>
+                </div>
+
+                <!-- Tipo de Estímulo -->
+                <div class="config-group">
+                    <label>📢 Tipo de Estímulo</label>
+                    <div class="stimuli-options">
+                        <button class="stimuli-btn" data-value="visual" data-selected="true">👁️ Visual</button>
+                        <button class="stimuli-btn" data-value="audio">🔊 Auditivo</button>
+                        <button class="stimuli-btn" data-value="mixed">🔀 Mixto</button>
+                    </div>
+                </div>
+
+                <!-- Sonido Toggle -->
+                <div class="config-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span>🔔 Habilitar sonidos</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="startBtn" class="btn btn-primary btn-large">Iniciar Entrenamiento</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Juego -->
+    <div id="gameScreen" class="screen">
+        <div class="game-container">
+            <!-- Control Superior -->
+            <div class="game-header">
+                <div class="timer-section">
+                    <div class="timer" id="timer">60s</div>
+                    <span class="timer-label">Tiempo restante</span>
+                </div>
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">Aciertos</span>
+                        <span class="stat-value" id="hits">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Errores</span>
+                        <span class="stat-value" id="errors">0</span>
+                    </div>
+                </div>
+                <button id="pauseBtn" class="btn btn-secondary">⏸️ Pausa</button>
+            </div>
+
+            <!-- Área Principal de Estímulo -->
+            <div class="game-main">
+                <div class="center-circle"></div>
+                
+                <!-- Estímulo Visual -->
+                <div id="visualStimulus" class="stimulus-container">
+                    <div class="arrow" id="arrow"></div>
+                </div>
+
+                <!-- Indicador de Modo Auditivo -->
+                <div id="audioIndicator" class="audio-indicator hidden">
+                    <div class="audio-wave"></div>
+                    <p id="audioText">Izquierda</p>
+                </div>
+            </div>
+
+            <!-- Información Inferior -->
+            <div class="game-footer">
+                <p id="instructionText" class="instruction-text">Espera el próximo comando...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Resultados -->
+    <div id="resultsScreen" class="screen">
+        <div class="results-container">
+            <h1>📊 Resultados</h1>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <span class="result-label">Duración</span>
+                    <span class="result-value" id="resultDuration">60s</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Nivel</span>
+                    <span class="result-value" id="resultDifficulty">Medio</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Total Instrucciones</span>
+                    <span class="result-value" id="resultTotal">42</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Aciertos</span>
+                    <span class="result-value success" id="resultHits">39</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Errores</span>
+                    <span class="result-value error" id="resultErrors">3</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Precisión</span>
+                    <span class="result-value" id="resultAccuracy">92.9%</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Tiempo Medio Reacción</span>
+                    <span class="result-value" id="resultReactionTime">0.82s</span>
+                </div>
+                <div class="result-card">
+                    <span class="result-label">Velocidad Máxima</span>
+                    <span class="result-value" id="resultMaxSpeed">0.45s</span>
+                </div>
+            </div>
+
+            <!-- Gráfico de Progreso -->
+            <div class="progress-chart">
+                <canvas id="progressChart"></canvas>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="results-actions">
+                <button id="retryBtn" class="btn btn-primary">🔄 Reintentar</button>
+                <button id="homeBtn" class="btn btn-secondary">🏠 Inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Pausa -->
+    <div id="pauseScreen" class="screen pause-overlay hidden">
+        <div class="pause-modal">
+            <h2>⏸️ Sesión en Pausa</h2>
+            <div class="pause-stats">
+                <p>Tiempo transcurrido: <span id="pauseTime">30s</span></p>
+                <p>Aciertos: <span id="pauseHits">15</span></p>
+                <p>Errores: <span id="pauseErrors">2</span></p>
+            </div>
+            <div class="pause-actions">
+                <button id="resumeBtn" class="btn btn-primary">▶️ Continuar</button>
+                <button id="quitBtn" class="btn btn-danger">❌ Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/stimuli.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
